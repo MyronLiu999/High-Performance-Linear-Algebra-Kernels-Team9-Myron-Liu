@@ -44,6 +44,25 @@ void allocate_vector(double** vector, int longs) {
     }
 }
 
+void multiply_mm_reordered(const double* matrixA, int rowsA, int colsA, const double* matrixB, int rowsB, int colsB,
+                           double* result) {
+    if (colsA != rowsB) return;
+
+    for (int i = 0; i < rowsA; i++) {
+        double* rowC = result + i * colsB;
+        for (int j = 0; j < colsB; j++) {
+            rowC[j] = 0.0;
+        }
+
+        for (int k = 0; k < colsA; k++) {
+            const double aik = matrixA[i * colsA + k];
+            const double* rowB = matrixB + k * colsB;
+            for (int j = 0; j < colsB; j++) {
+                rowC[j] += aik * rowB[j];
+            }
+        }
+    }
+}
 // void free_2d_matrix(double** matrix, int rows) {
 //     for (int i = 0; i < rows; i++) {
 //         delete[] matrix[i];
